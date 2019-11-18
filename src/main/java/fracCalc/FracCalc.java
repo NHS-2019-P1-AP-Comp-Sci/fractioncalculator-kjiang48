@@ -6,45 +6,45 @@ package fracCalc;
 import java.util.*;
 public class FracCalc {
     public static void main(String[] args) {
-    	String secondFrac = "";
+    	String cool = "";
     	Scanner input = new Scanner(System.in);
         String total = input.nextLine();
         int quitTest = total.indexOf("quit");
         while (quitTest == -1) {
-        	secondFrac = produceAnswer(total);
-        	System.out.println(secondFrac);
+        	cool = produceAnswer(total);
         	total = input.nextLine();
         	quitTest = total.indexOf("quit");
-        }        
-        
+        }       
     }
-
-    // ** IMPORTANT ** DO NOT DELETE THIS FUNCTION.  This function will be used to test your code
-    // This function takes a String 'input' and produces the result
-    //
-    // input is a fraction string that needs to be evaluated.  For your program, this will be the user input.
-    //      e.g. input ==> "1/2 + 3/4"
-    //
-    // The function should return the result of the fraction after it has been calculated
-    //      e.g. return ==> "1_1/4"
-    
-    
     
     public static String produceAnswer(String input) {
         // TODO: Implement this function to produce the solution to the input
-    	String totalAdded2 = "";
+    	String finish = "";
     	int function = input.indexOf(" ");
+    	String operator = input.substring(function + 1, function + 2);
     	String secondFrac = input.substring(function + 3);
     	String firstFrac = input.substring(0, function);
     	int wholeNum1 = findingWholeNum(firstFrac);
-    	int num1 = findingNum(firstFrac);
+    	int num1 = findingNum(firstFrac, wholeNum1);
     	int denom1 = findingDenom(firstFrac);
     	int wholeNum2 = findingWholeNum(secondFrac);
-    	int num2 = findingNum(secondFrac);
+    	int num2 = findingNum(secondFrac, wholeNum2);
     	int denom2 = findingDenom(secondFrac);
-    	totalAdded2 = "whole:" + wholeNum2 + " numerator:"+ num2 + " denominator:" +denom2;
-        return totalAdded2;
+    	if (operator.indexOf("+") != -1) {
+    		finish = add(wholeNum1, num1, denom1, wholeNum2, num2, denom2);
+    	}
+    	else if (operator.indexOf("-") != -1) {
+    		finish = subtract(wholeNum1, num1, denom1, wholeNum2, num2, denom2);
+    	}
+    	else if (operator.indexOf("*") != -1) {
+    		finish = multiply(wholeNum1, num1, denom1, wholeNum2, num2, denom2);
+    	}
+    	else {
+    		finish = divide(wholeNum1, num1, denom1, wholeNum2, num2, denom2);
+    	}
+        return finish;
     }
+    
     public static int findingWholeNum(String input) {
     	int findWholeNum = input.indexOf("_");
     	int findingFrac = findingFrac(input);
@@ -65,10 +65,10 @@ public class FracCalc {
     	int frac = input.indexOf("/");
     	return frac;
     }
-    
-    public static int findingNum(String input) {
+    public static int findingNum(String input, int num) {
     	int findingFrac = findingFrac(input);
     	int findWholeNum = input.indexOf("_");
+    	int neg = input.indexOf("-");
     	String numerator = "";
     	if (findingFrac != -1) {
     		numerator = input.substring(findWholeNum +1, findingFrac);
@@ -77,6 +77,9 @@ public class FracCalc {
     		numerator = "0";
     	}
     	int cool = Integer.parseInt(numerator);
+    	if (neg != -1 && num != 0) {
+    		cool = cool * -1;
+    	}
     	return cool;
     }
     public static int findingDenom(String input) {
@@ -91,5 +94,65 @@ public class FracCalc {
     	int cool = Integer.parseInt(denominator);
     	return cool;
     }
-    // TODO: Fill in the space below with any helper methods that you think you will need
+    public static String format(int num3, int n3, int d3) {
+    	String cool = "";
+    	if (d3 == 1) {
+    		num3 = n3 + num3;
+    		n3 = 0;
+    	}
+ //   	num3 = num3 + (n3%d3);
+    	
+    	if (n3 < 0 && num3 < 0) {
+    		n3 = n3 * -1;
+    	}
+    	if (n3 != 0 && num3 != 0) {
+    		cool = num3 + "_" + n3 + "/" + d3;
+    	}
+    	else if (num3 != 0 && n3 == 0) {
+    		cool = "" + num3;
+    	}
+    	else if (n3 == 0 && num3 == 0) {
+    		cool = "" + 0;
+    	}
+    	else if (num3 == 0 && n3 != 0){
+    		cool = n3 + "/" + d3;
+    	}
+    	
+    	return cool;
+    }
+    public static String subtract(int num1, int n1, int d1, int num2, int n2, int d2) {
+    	int num3 = num1 - num2;
+    	n1 = n1 * d2;
+    	n2 = n2 * d1;
+    	int d3 = d1 * d2;
+    	int n3 = n1 - n2;
+    	String cool = format(num3, n3, d3);
+    	return cool;
+    }
+    public static String add(int num1, int n1, int d1, int num2, int n2, int d2) {
+    	int num3 = num1 + num2;
+    	n1 = n1 * d2;
+    	n2 = n2 * d1;
+    	int d3 = d1 * d2;
+    	int n3 = n1 + n2;
+    	String cool = format(num3, n3, d3);
+    	return cool;
+    }
+    public static String multiply(int num1, int n1, int d1, int num2, int n2, int d2) {
+    	num1 = (num1 * d1) + n1;
+    	num2 = (num2 * d2) + n2;
+    	int num3 = num1 * num2;
+    	int denom3 = d1 * d2;
+    	String cool = format(0, num3, denom3);
+    	return cool;
+    }
+    public static String divide(int num1, int n1, int d1, int num2, int n2, int d2) {
+    	num1 = (num1 * d1) + n1;
+    	num2 = (num2 * d2) + n2;
+    	int num3 = num1 * d2;
+    	int denom3 = num2 * d1;
+    	String cool = format(0, num3, denom3);
+    	return cool;
+    }
+    
 }
