@@ -6,19 +6,20 @@ package fracCalc;
 import java.util.*;
 public class FracCalc {
     public static void main(String[] args) {
+    	// This is the method which takes in user input and checks for quit to leave the program.
     	String cool = "";
     	Scanner input = new Scanner(System.in);
         String total = input.nextLine();
         int quitTest = total.indexOf("quit");
         while (quitTest == -1) {
         	cool = produceAnswer(total);
+        	System.out.println(cool);
         	total = input.nextLine();
         	quitTest = total.indexOf("quit");
         }       
     }
-    
     public static String produceAnswer(String input) {
-        // TODO: Implement this function to produce the solution to the input
+    	// This is the method that checks for the operator and returns the answer.
     	String finish = "";
     	int function = input.indexOf(" ");
     	String operator = input.substring(function + 1, function + 2);
@@ -44,10 +45,10 @@ public class FracCalc {
     	}
         return finish;
     }
-    
     public static int findingWholeNum(String input) {
+    	// This is the method that finds and parses the whole number of a mixed fraction.
     	int findWholeNum = input.indexOf("_");
-    	int findingFrac = findingFrac(input);
+    	int findingFrac = input.indexOf("/");
     	String wholeNum = "";
     	if (findWholeNum != -1) {
     		wholeNum = input.substring(0, findWholeNum);
@@ -61,12 +62,9 @@ public class FracCalc {
     	int cool = Integer.parseInt(wholeNum);
     	return cool;
     }
-    public static int findingFrac(String input) {
-    	int frac = input.indexOf("/");
-    	return frac;
-    }
     public static int findingNum(String input, int num) {
-    	int findingFrac = findingFrac(input);
+    	// This is the method that finds and parses the numerator of the fraction.
+    	int findingFrac = input.indexOf("/");
     	int findWholeNum = input.indexOf("_");
     	int neg = input.indexOf("-");
     	String numerator = "";
@@ -83,7 +81,8 @@ public class FracCalc {
     	return cool;
     }
     public static int findingDenom(String input) {
-    	int findingFrac = findingFrac(input);
+    	// This is the method that finds and parses the denominator of the fraction.
+    	int findingFrac = input.indexOf("/");
     	String denominator = "";
     	if (findingFrac != -1) {
     		denominator = input.substring(findingFrac + 1);
@@ -95,15 +94,34 @@ public class FracCalc {
     	return cool;
     }
     public static String format(int num3, int n3, int d3) {
+    	// This is the method that formats the fractions after the answers have been produced. It also reduces the fractions.
     	String cool = "";
+    	int m = n3/d3;
+    	num3 = m + num3;
+    	n3 = n3 % d3;
+    	int factor = gcd(n3,d3);
+    	int c = Math.abs(factor);
+    	n3 = n3/c;
+    	d3 = d3/c;
     	if (d3 == 1) {
     		num3 = n3 + num3;
     		n3 = 0;
     	}
- //   	num3 = num3 + (n3%d3);
-    	
+    	if (n3 < 0 && d3 < 0) {
+    		n3 = n3 * -1;
+    		d3 = d3 * -1;
+    	}
     	if (n3 < 0 && num3 < 0) {
     		n3 = n3 * -1;
+    	}
+    	
+    	if (num3 < 0 && d3 < 0) {
+    		d3 *= -1;
+    	}
+    	
+    	if (n3 > 0 && d3 < 0) {
+    		n3 *= -1;
+    		d3 *= -1;
     	}
     	if (n3 != 0 && num3 != 0) {
     		cool = num3 + "_" + n3 + "/" + d3;
@@ -117,19 +135,26 @@ public class FracCalc {
     	else if (num3 == 0 && n3 != 0){
     		cool = n3 + "/" + d3;
     	}
-    	
     	return cool;
     }
     public static String subtract(int num1, int n1, int d1, int num2, int n2, int d2) {
+    	// This is the method that subtracts the two fractions.
     	int num3 = num1 - num2;
     	n1 = n1 * d2;
     	n2 = n2 * d1;
     	int d3 = d1 * d2;
     	int n3 = n1 - n2;
+    	int c = n3/d3;
+    	if (num3 < 0 && c >= 0) {
+    		num3 = num3 * d3;
+    		n3 = n3 + num3;
+    		num3 = 0;
+    	}
     	String cool = format(num3, n3, d3);
     	return cool;
     }
     public static String add(int num1, int n1, int d1, int num2, int n2, int d2) {
+    	// This is the method that adds the two fractions.
     	int num3 = num1 + num2;
     	n1 = n1 * d2;
     	n2 = n2 * d1;
@@ -139,6 +164,7 @@ public class FracCalc {
     	return cool;
     }
     public static String multiply(int num1, int n1, int d1, int num2, int n2, int d2) {
+    	// This is the method that multiplies the two fractions.
     	num1 = (num1 * d1) + n1;
     	num2 = (num2 * d2) + n2;
     	int num3 = num1 * num2;
@@ -147,6 +173,7 @@ public class FracCalc {
     	return cool;
     }
     public static String divide(int num1, int n1, int d1, int num2, int n2, int d2) {
+    	// This is the method that divides the two fractions.
     	num1 = (num1 * d1) + n1;
     	num2 = (num2 * d2) + n2;
     	int num3 = num1 * d2;
@@ -154,5 +181,9 @@ public class FracCalc {
     	String cool = format(0, num3, denom3);
     	return cool;
     }
-    
+    public static int gcd(int a, int b) {
+    	// This is the method that finds the greatest common denominator of the fraction so they can be reduced.
+    	if (a == 0)  
+	        return b;return gcd(b%a, a);  
+    }
 }
